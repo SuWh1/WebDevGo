@@ -1,0 +1,13 @@
+<h1>Hello, {{.Name}}.</h1>
+<p>Welcome to home page. Your ID is {{.ID}}.</p>
+<p>My skils:</p>
+
+<hr>
+
+{{range $i, $skill := .Skills}}
+    {{if eq $skill "JS"}}
+        <p>OMG {{ $skill }}</p>
+    {{else}}
+        <p>{{ $skill }}</p>
+    {{end}}
+{{end}}

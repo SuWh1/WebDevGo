@@ -1,0 +1,18 @@
+<h1>Contact Page</h1>
+<p>
+    {{.ID}} -> {{.Name}} get in touch email me at <a href="https://github.com/SuWh1/WebDevGo">GitHub</a>.
+</p>  
+
+<hr>
+
+<h1>{{.Name}}'s Sports and Experience</h1>
+
+<p>
+    {{range $sport, $count := .Sports}}
+        {{if gt $count 3}}
+            <p>LEGENDARY {{ $sport }}</p>
+        {{else}}
+            <p>{{ $sport }} -> {{ $count }}</p>
+        {{end}}
+    {{end}}
+</p>
