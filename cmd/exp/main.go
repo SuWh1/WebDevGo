@@ -1,38 +1,40 @@
 package main
 
 import (
-	"html/template"
-	"os"
+	"errors"
+	"fmt"
 )
 
-type User struct {
-	Name string
-	Age  int
-	Meta UserMeta
-	Bio  string
-}
-
-type UserMeta struct {
-	Visits int
-}
-
 func main() {
-	t, err := template.ParseFiles("hello.gohtml")
-	if err != nil {
-		panic(err)
+	err := B()
+
+	var customErr *CustomError
+	if errors.As(err, &customErr) {
+		fmt.Printf("Error is of type *CustomError: %v\n", customErr)
+	} else {
+		fmt.Println("Error is not of type *CustomError")
 	}
 
-	user := User{
-		Name: "dauren",
-		Age:  18,
-		Meta: UserMeta{
-			Visits: 4,
-		},
-		Bio: `<script>alert("haha you v been joked");</script>`,
-	}
+}
 
-	err = t.Execute(os.Stdout, user) // execute - take a template and proccess it
-	if err != nil {
-		panic(err)
-	}
+// It is common for packages like database/sql to return
+// an error that is predefined like this one.
+var ErrNotFound = errors.New("not found")
+var ErrMadiLoh = errors.New("madi loh")
+
+func A() error {
+	return &CustomError{msg: "wrapped error: not found"}
+}
+
+func B() error {
+	err := A()
+	return fmt.Errorf("b: %w", err)
+}
+
+type CustomError struct {
+	msg string
+}
+
+func (e *CustomError) Error() string {
+	return e.msg
 }
