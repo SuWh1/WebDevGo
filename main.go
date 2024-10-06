@@ -34,24 +34,29 @@ func main() {
 	userService := models.UserService{
 		DB: db,
 	}
+	sessionService := models.SessionService{
+		DB: db,
+	}
 
 	usersC := controllers.Users{
-		UserService: &userService, // we have access to users controllers
-	} // user-related actions: browsing diff pages
+		UserService:    &userService,
+		SessionService: &sessionService,
+	}
 
 	usersC.Templates.New = views.Must(views.ParseFS(
 		templates.FS,
 		"signup.gohtml", "tailwind.gohtml",
-	)) // signup new user
+	))
 	usersC.Templates.SignIn = views.Must(views.ParseFS(
 		templates.FS,
 		"signin.gohtml", "tailwind.gohtml",
-	)) // gives signin templates inside user controller
+	))
 
 	r.Get("/signup", usersC.New)
-	r.Post("/users", usersC.Create)
+	r.Post("/signup", usersC.Create)
 	r.Get("/signin", usersC.SignIn)
 	r.Post("/signin", usersC.ProcessSignIn)
+	r.Post("/signout", usersC.ProcessSignOut)
 	r.Get("/users/me", usersC.CurrentUser)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
@@ -60,10 +65,11 @@ func main() {
 
 	fmt.Println("Server on :3000...")
 
-	csrfKey := "qwertyuioplkjhgfdsazxcvbnmkijhg"
+	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
 	csrfMw := csrf.Protect(
 		[]byte(csrfKey),
-		csrf.Secure(false), // because it is local
+		// TODO : fix this before deploying to production.
+		csrf.Secure(false),
 	)
-	http.ListenAndServe(":3000", csrfMw(r)) // listens for incoming HTTP requests
+	http.ListenAndServe(":3000", csrfMw(r))
 }

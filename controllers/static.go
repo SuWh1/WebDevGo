@@ -1,21 +1,20 @@
 package controllers
 
-import ( // we have text/template but when we work with html we should use that
-	"html/template" // to parse and execute HTML safely
+import (
+	"html/template"
 	"net/http"
 )
 
-// HandlerFunc -> adapter to allow the use of ordinary functions as HTTP handlers
-func StaticHandler(tpl Template) http.HandlerFunc { // handle static pages: home contact and so on
+func StaticHandler(tpl Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tpl.Execute(w, r, nil) // when executed -> redered in client's page
+		tpl.Execute(w, r, nil)
 	}
 }
 
 func FAQ(tpl Template) http.HandlerFunc {
 	questions := []struct {
 		Question string
-		Answer   template.HTML // to make links work -> for safe only
+		Answer   template.HTML
 	}{
 		{
 			Question: "Is there a free version?",
