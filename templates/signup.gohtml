@@ -4,14 +4,14 @@
     <h1 class="pt-4 pb-8 text-center text-3xl font-bold text-gray-900">
       Be part of our community today!
     </h1>
-    <form action="/signup" method="POST">
+    <form action="/signup" method="post">
       <div class="hidden">
         {{csrfField}}
       </div>
       <div class="py-2">
-        <label for="email" class="text-sm font-semibold text-gray-800"
-          >Email Address</label
-        >
+        <label for="email" class="text-sm font-semibold text-gray-800">
+          Email Address
+        </label>
         <input
             name="email"
             id="email"
@@ -25,9 +25,9 @@
         />
       </div>
       <div class="py-2">
-        <label for="password" class="text-sm font-semibold text-gray-800"
-          >Password</label
-        >
+        <label for="password" class="text-sm font-semibold text-gray-800">
+          Password
+        </label>
         <input
           name="password"
           id="password"
@@ -52,7 +52,7 @@
           <a href="/signin" class="underline">Sign In</a>
         </p>
         <p class="text-xs text-gray-500">
-          <a href="/reset-pw" class="underline">Forget your password?</a>
+          <a href="/forgot-pw" class="underline">Forget your password?</a>
         </p>
       </div>
     </form>

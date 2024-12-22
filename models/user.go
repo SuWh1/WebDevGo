@@ -2,9 +2,12 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgconn"
+	"github.com/jackc/pgerrcode"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,17 +23,6 @@ type UserService struct {
 
 func (us *UserService) Create(email, password string) (*User, error) {
 	email = strings.ToLower(email)
-
-	var existingUser User
-	err := us.DB.QueryRow(`
-		SELECT id, email FROM users 
-		WHERE email = $1`, email).Scan(&existingUser.ID, &existingUser.Email)
-	if err == nil {
-		return nil, fmt.Errorf("create user: email already exists")
-	} else if err != sql.ErrNoRows {
-		return nil, fmt.Errorf("create user: %w", err)
-	}
-
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w", err)
@@ -48,6 +40,12 @@ func (us *UserService) Create(email, password string) (*User, error) {
 
 	err = row.Scan(&user.ID)
 	if err != nil {
+		var pgError *pgconn.PgError
+		if errors.As(err, &pgError) { // .As func is used to check if an error is of a specific type
+			if pgError.Code == pgerrcode.UniqueViolation {
+				return nil, ErrEmailTaken
+			}
+		}
 		return nil, fmt.Errorf("create user: %w", err)
 	}
 
@@ -75,4 +73,22 @@ func (us *UserService) Authenticate(email, password string) (*User, error) {
 	}
 
 	return &user, nil
+}
+
+func (us *UserService) UpdatePassword(userID int, password string) error {
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("update password: %w", err)
+	}
+	passwordHash := string(hashedBytes)
+
+	_, err = us.DB.Exec(`
+		UPDATE users
+		SET password_hash=$2
+		WHERE id = $1;`, userID, passwordHash)
+	if err != nil {
+		return fmt.Errorf("update password: %w", err)
+	}
+
+	return nil
 }

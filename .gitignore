@@ -1,3 +1,35 @@
-WebDevGo
-WebDevGo.exe
-WebDevGo.exe~
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.o
+*.a
+*.out
+
+# Go modules and dependencies
+vendor/
+go.sum
+
+# Environment variables and configuration
+.env
+config.yaml
+config.json
+
+# Logs and debugging
+*.log
+*.pprof
+*.trace
+
+# Editor and OS files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+*.swp
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
