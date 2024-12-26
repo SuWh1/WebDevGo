@@ -7,6 +7,12 @@
 *.a
 *.out
 
+# Out specific binary
+WebDevGo
+
+# Images directory during development
+images/
+
 # Go modules and dependencies
 vendor/
 go.sum
